@@ -1,0 +1,140 @@
+-- Создание базы данных
+Create Database DE12
+
+USE DE12
+GO
+
+-- Таблица Category
+CREATE TABLE [dbo].[Category](
+	[ID] [int] NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+ CONSTRAINT [PK_Category] PRIMARY KEY CLUSTERED ([ID] ASC)
+)
+GO
+
+-- Таблица OrderStatus
+CREATE TABLE [dbo].[OrderStatus](
+	[ID] [int] NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+ CONSTRAINT [PK_OrderStatus] PRIMARY KEY CLUSTERED ([ID] ASC)
+)
+GO
+
+-- Таблица PickUpPoint
+CREATE TABLE [dbo].[PickUpPoint](
+	[ID] [int] NOT NULL,
+	[PostCode] [int] NOT NULL,
+	[City] [nvarchar](50) NOT NULL,
+	[Streed] [nvarchar](50) NOT NULL,
+	[Building] [nvarchar](50) NOT NULL,
+ CONSTRAINT [PK_PickUpPoint] PRIMARY KEY CLUSTERED ([ID] ASC)
+)
+GO
+
+-- Таблица Producer
+CREATE TABLE [dbo].[Producer](
+	[ID] [int] NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+ CONSTRAINT [PK_Producer] PRIMARY KEY CLUSTERED ([ID] ASC)
+)
+GO
+
+-- Таблица Provider
+CREATE TABLE [dbo].[Provider](
+	[ID] [int] NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+ CONSTRAINT [PK_Provider] PRIMARY KEY CLUSTERED ([ID] ASC)
+)
+GO
+
+-- Таблица Role
+CREATE TABLE [dbo].[Role](
+	[ID] [int] NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+ CONSTRAINT [PK_Role] PRIMARY KEY CLUSTERED ([ID] ASC)
+)
+GO
+
+-- Таблица Unit
+CREATE TABLE [dbo].[Unit](
+	[ID] [int] NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+ CONSTRAINT [PK_Unit] PRIMARY KEY CLUSTERED ([ID] ASC)
+)
+GO
+
+-- Таблица User
+CREATE TABLE [dbo].[User](
+	[ID] [int] NOT NULL,
+	[Firstname] [nvarchar](50) NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+	[Surname] [nvarchar](50) NOT NULL,
+	[Login] [nvarchar](50) NOT NULL,
+	[Password] [nvarchar](50) NOT NULL,
+	[Role] [int] NOT NULL,
+ CONSTRAINT [PK_User] PRIMARY KEY CLUSTERED ([ID] ASC)
+)
+GO
+
+-- Таблица Product
+CREATE TABLE [dbo].[Product](
+	[ID] [int] NOT NULL,
+	[Article] [nvarchar](10) NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+	[UnitID] [int] NOT NULL,
+	[Price] [money] NOT NULL,
+	[ProviderID] [int] NOT NULL,
+	[ProducerID] [int] NOT NULL,
+	[CategoryID] [int] NOT NULL,
+	[Discount] [decimal](4, 2) NOT NULL,
+	[AmountInStock] [decimal](6, 2) NOT NULL,
+	[Description] [nvarchar](max) NOT NULL,
+	[Photo] [nvarchar](max) NULL,
+ CONSTRAINT [PK_Product] PRIMARY KEY CLUSTERED ([ID] ASC)
+)
+GO
+
+-- Таблица Order
+CREATE TABLE [dbo].[Order](
+	[ID] [int] NOT NULL,
+	[CreationData] [date] NOT NULL,
+	[DevileryDate] [date] NOT NULL,
+	[PickUpPointID] [int] NOT NULL,
+	[UsersID] [int] NOT NULL,
+	[ReceiptCode] [nvarchar](50) NOT NULL,
+	[StatusID] [int] NOT NULL,
+ CONSTRAINT [PK_Order] PRIMARY KEY CLUSTERED ([ID] ASC)
+)
+GO
+
+-- Таблица ProductInOrder
+CREATE TABLE [dbo].[ProductInOrder](
+	[ID] [int] NOT NULL,
+	[OrderID] [int] NOT NULL,
+	[ProductID] [int] NOT NULL,
+	[Amount] [int] NOT NULL,
+ CONSTRAINT [PK_ProductInOrder] PRIMARY KEY CLUSTERED ([ID] ASC)
+)
+GO
+
+-- Добавление внешних ключей
+ALTER TABLE [dbo].[Order] ADD FOREIGN KEY([PickUpPointID]) REFERENCES [dbo].[PickUpPoint] ([ID])
+GO
+ALTER TABLE [dbo].[Order] ADD FOREIGN KEY([StatusID]) REFERENCES [dbo].[OrderStatus] ([ID])
+GO
+ALTER TABLE [dbo].[Order] ADD FOREIGN KEY([UsersID]) REFERENCES [dbo].[User] ([ID])
+GO
+ALTER TABLE [dbo].[Product] ADD FOREIGN KEY([CategoryID]) REFERENCES [dbo].[Category] ([ID])
+GO
+ALTER TABLE [dbo].[Product] ADD FOREIGN KEY([ProducerID]) REFERENCES [dbo].[Producer] ([ID])
+GO
+ALTER TABLE [dbo].[Product] ADD FOREIGN KEY([ProviderID]) REFERENCES [dbo].[Provider] ([ID])
+GO
+ALTER TABLE [dbo].[Product] ADD FOREIGN KEY([UnitID]) REFERENCES [dbo].[Unit] ([ID])
+GO
+ALTER TABLE [dbo].[ProductInOrder] ADD FOREIGN KEY([OrderID]) REFERENCES [dbo].[Order] ([ID])
+GO
+ALTER TABLE [dbo].[ProductInOrder] ADD FOREIGN KEY([ProductID]) REFERENCES [dbo].[Product] ([ID])
+GO
+ALTER TABLE [dbo].[User] ADD FOREIGN KEY([Role]) REFERENCES [dbo].[Role] ([ID])
+GO
